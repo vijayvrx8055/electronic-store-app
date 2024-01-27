@@ -26,8 +26,8 @@ ElectroHomes is an electronic store application designed to provide a seamless s
 
 1. **Clone the repository:**
 
-git clone https://github.com/your-username/electrohomes.git
-cd electrohomes
+git clone [https://github.com/vijayvrx8055/electronic-store-app.git] 
+cd electrohomes-service-app
 
 
 2. **Backend Setup:**
