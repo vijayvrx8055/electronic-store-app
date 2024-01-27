@@ -25,23 +25,22 @@ ElectroHomes is an electronic store application designed to provide a seamless s
 ## Setup Instructions
 
 1. **Clone the repository:**
-
+```
 git clone https://github.com/vijayvrx8055/electronic-store-app.git 
-
-cd electrohomes-service-app
+```
 
 
 2. **Backend Setup:**
 - Navigate to the `backend` directory:
   ```
-  cd backend
+  cd electrohomes-service-app
   ```
 - [Provide instructions for setting up the backend, including database configuration and running the Spring Boot application.]
 
 3. **Frontend Setup:**
 - Navigate to the `frontend` directory:
   ```
-  cd frontend
+  cd electrohomes-ui-app
   ```
 - [Provide instructions for setting up the frontend, including installing dependencies and running the Angular application.]
 
