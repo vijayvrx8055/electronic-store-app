@@ -1,12 +1,18 @@
 package com.vrx.electronic.store.service.impl;
 
+import com.vrx.electronic.store.dto.PageableResponse;
 import com.vrx.electronic.store.dto.UserDto;
 import com.vrx.electronic.store.entity.User;
 import com.vrx.electronic.store.exception.ResourceNotFoundException;
 import com.vrx.electronic.store.repository.UserRepository;
 import com.vrx.electronic.store.service.UserService;
+import com.vrx.electronic.store.util.PageUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,9 +60,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(this::entityToDto).collect(Collectors.toList());
+    public PageableResponse<UserDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir) {
+        Sort sort = (sortDir.equalsIgnoreCase("asc")) ?
+                (Sort.by(sortBy).ascending()) : (Sort.by(sortBy).descending());
+        //pageNumber default starts from 0
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<User> userPage = userRepository.findAll(pageable);
+        List<User> users = userPage.getContent();
+        return PageUtil.getPageableResponse(userPage, UserDto.class);
     }
 
     @Override
