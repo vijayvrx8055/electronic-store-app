@@ -1,6 +1,7 @@
 # electronic-store-app
 Full Project for electronic store including UI and service apps
 
+IN PROGRESS...
 
 # ElectroHomes
 
@@ -63,6 +64,6 @@ Contributions are welcome! If you'd like to contribute to ElectroHomes, please f
 
 ## Contact
 
-For any inquiries or support, feel free to contact us at [your-email@example.com].
+For any inquiries or support, feel free to contact us at [vijay.kumar.vrx@gmail.com].
 
 Thank you for using ElectroHomes!
