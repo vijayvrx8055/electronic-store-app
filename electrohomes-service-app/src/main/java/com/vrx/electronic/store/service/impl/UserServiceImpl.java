@@ -2,6 +2,7 @@ package com.vrx.electronic.store.service.impl;
 
 import com.vrx.electronic.store.dto.UserDto;
 import com.vrx.electronic.store.entity.User;
+import com.vrx.electronic.store.exception.ResourceNotFoundException;
 import com.vrx.electronic.store.repository.UserRepository;
 import com.vrx.electronic.store.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto, String userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with given id."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with given id."));
         user.setName(userDto.getName());
         user.setAbout(userDto.getAbout());
         user.setGender(userDto.getGender());
@@ -48,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found for given userID."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for given userID."));
         userRepository.delete(user);
     }
 
@@ -60,19 +61,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found for given userID."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for given userID."));
         return entityToDto(user);
     }
 
     @Override
     public UserDto getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found for given EMAIL."));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found for given EMAIL."));
         return entityToDto(user);
     }
 
     @Override
     public List<UserDto> searchUsers(String keyword) {
-        List<User> users = userRepository.findByNameContaining(keyword).orElseThrow(() -> new RuntimeException("Users not found with given keywords"));
+        List<User> users = userRepository.findByNameContaining(keyword).orElseThrow(() -> new ResourceNotFoundException("Users not found with given keywords"));
         return users.stream().map(this::entityToDto).collect(Collectors.toList());
     }
 
