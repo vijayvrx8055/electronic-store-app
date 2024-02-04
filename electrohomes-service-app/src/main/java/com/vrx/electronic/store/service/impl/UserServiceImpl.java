@@ -9,12 +9,17 @@ import com.vrx.electronic.store.service.UserService;
 import com.vrx.electronic.store.util.PageUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,6 +32,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Value("${user.profile.image.path}")
+    private String imagePath;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -56,7 +64,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for given userID."));
+        deleteUserImage(user.getUserId());
         userRepository.delete(user);
+
     }
 
     @Override
@@ -88,6 +98,17 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(this::entityToDto).collect(Collectors.toList());
     }
 
+    public void deleteUserImage(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for provided User ID !!"));
+        String fullPath = imagePath + user.getImageName();
+        try {
+            Path path = Paths.get(fullPath);
+            Files.delete(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     //-----------------------------------------
     private UserDto entityToDto(User savedUser) {
 //        return UserDto.builder().userId(savedUser.getUserId()).name(savedUser.getName()).email(savedUser.getEmail()).password(savedUser.getPassword()).gender(savedUser.getGender()).about(savedUser.getAbout()).image_name(savedUser.getImage_name()).build();
@@ -98,4 +119,6 @@ public class UserServiceImpl implements UserService {
 //        return User.builder().userId(userDto.getUserId()).name(userDto.getName()).email(userDto.getEmail()).password(userDto.getPassword()).about(userDto.getAbout()).gender(userDto.getGender()).image_name(userDto.getImage_name()).build();
         return modelMapper.map(userDto, User.class);
     }
+
+
 }
