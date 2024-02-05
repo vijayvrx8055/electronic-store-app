@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 public class PageUtil {
 
     public static <U, V> PageableResponse<V> getPageableResponse(Page<U> page, Class<V> classType) {
-        List<U> entity = page.getContent(); // U: Entity type data
+        List<U> entities = page.getContent(); // U: Entity type data
         PageableResponse<V> response = new PageableResponse<>(); // V: DTO type data
-        response.setContent(entity.stream().map(ob -> new ModelMapper().map(ob, classType)).collect(Collectors.toList()));
+        response.setContent(entities.stream().map(ob -> new ModelMapper().map(ob, classType)).collect(Collectors.toList()));
         response.setPageSize(page.getSize());
         response.setPageNumber(page.getNumber());
         response.setLastPage(page.isLast());
