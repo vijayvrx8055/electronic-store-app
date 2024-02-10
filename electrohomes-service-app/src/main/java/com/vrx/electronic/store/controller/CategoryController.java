@@ -2,6 +2,7 @@ package com.vrx.electronic.store.controller;
 
 import com.vrx.electronic.store.dto.ApiResponseMessage;
 import com.vrx.electronic.store.dto.CategoryDto;
+import com.vrx.electronic.store.dto.ImageResponse;
 import com.vrx.electronic.store.dto.PageableResponse;
 import com.vrx.electronic.store.service.CategoryService;
 import jakarta.validation.Valid;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/categories")
@@ -59,5 +61,12 @@ public class CategoryController {
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable String categoryId) {
         CategoryDto response = categoryService.getById(categoryId);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    //upload image
+    @PostMapping("/image/{categoryId}")
+    public ResponseEntity<ImageResponse> uploadCoverImage(@RequestParam MultipartFile file, @PathVariable String categoryId) {
+        ImageResponse imageResponse = categoryService.uploadCoverImage(file, categoryId);
+        return new ResponseEntity<>(imageResponse, HttpStatus.CREATED);
     }
 }

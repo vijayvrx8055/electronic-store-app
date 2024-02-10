@@ -1,6 +1,7 @@
 package com.vrx.electronic.store.service.impl;
 
 import com.vrx.electronic.store.dto.CategoryDto;
+import com.vrx.electronic.store.dto.ImageResponse;
 import com.vrx.electronic.store.dto.PageableResponse;
 import com.vrx.electronic.store.entity.Category;
 import com.vrx.electronic.store.exception.ResourceNotFoundException;
@@ -10,12 +11,16 @@ import com.vrx.electronic.store.service.FileService;
 import com.vrx.electronic.store.util.PageUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -26,6 +31,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Value("${category.cover.image.path}")
+    private String coverImagePath;
+
+    @Autowired
+    private FileService fileService;
 
     @Override
     public CategoryDto create(CategoryDto categoryDto) {
@@ -65,5 +76,19 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto getById(String categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found !!"));
         return mapper.map(category, CategoryDto.class);
+    }
+
+    @Override
+    public ImageResponse uploadCoverImage(MultipartFile file, String categoryId) {
+        try {
+            String uploadedFile = fileService.uploadFile(file, categoryId);
+            Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category Id is not found !!"));
+            category.setCoverImage(uploadedFile);
+            categoryRepository.save(category);
+            return ImageResponse.builder().imageName(uploadedFile).message("Cover Image uploaded successfully !!")
+                    .success(true).status(HttpStatus.CREATED).build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
