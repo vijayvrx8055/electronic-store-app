@@ -1,6 +1,6 @@
 package com.vrx.electronic.store.exception;
 
-import com.vrx.electronic.store.dto.ApiResponseMessage;
+import com.vrx.electronic.store.dto.response.ApiResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

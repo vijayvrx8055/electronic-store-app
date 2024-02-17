@@ -1,6 +1,6 @@
 package com.vrx.electronic.store.service.impl;
 
-import com.vrx.electronic.store.dto.PageableResponse;
+import com.vrx.electronic.store.dto.response.PageableResponse;
 import com.vrx.electronic.store.dto.UserDto;
 import com.vrx.electronic.store.entity.User;
 import com.vrx.electronic.store.exception.ResourceNotFoundException;

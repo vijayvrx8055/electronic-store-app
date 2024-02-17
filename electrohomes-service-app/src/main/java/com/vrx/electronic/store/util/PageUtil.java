@@ -1,6 +1,6 @@
 package com.vrx.electronic.store.util;
 
-import com.vrx.electronic.store.dto.PageableResponse;
+import com.vrx.electronic.store.dto.response.PageableResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 

@@ -1,4 +1,4 @@
-package com.vrx.electronic.store.dto;
+package com.vrx.electronic.store.dto.response;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApiResponseMessage {
-
+public class ImageResponse {
+    private String imageName;
     private String message;
     private boolean success;
     private HttpStatus status;

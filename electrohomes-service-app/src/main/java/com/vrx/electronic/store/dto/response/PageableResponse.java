@@ -1,4 +1,4 @@
-package com.vrx.electronic.store.dto;
+package com.vrx.electronic.store.dto.response;
 
 import lombok.*;
 

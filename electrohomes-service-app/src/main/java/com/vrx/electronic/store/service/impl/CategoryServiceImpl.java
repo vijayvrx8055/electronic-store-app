@@ -1,8 +1,8 @@
 package com.vrx.electronic.store.service.impl;
 
 import com.vrx.electronic.store.dto.CategoryDto;
-import com.vrx.electronic.store.dto.ImageResponse;
-import com.vrx.electronic.store.dto.PageableResponse;
+import com.vrx.electronic.store.dto.response.ImageResponse;
+import com.vrx.electronic.store.dto.response.PageableResponse;
 import com.vrx.electronic.store.entity.Category;
 import com.vrx.electronic.store.exception.ResourceNotFoundException;
 import com.vrx.electronic.store.repository.CategoryRepository;

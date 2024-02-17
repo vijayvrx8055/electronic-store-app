@@ -1,9 +1,9 @@
 package com.vrx.electronic.store.controller;
 
-import com.vrx.electronic.store.dto.ApiResponseMessage;
+import com.vrx.electronic.store.dto.response.ApiResponseMessage;
 import com.vrx.electronic.store.dto.CategoryDto;
-import com.vrx.electronic.store.dto.ImageResponse;
-import com.vrx.electronic.store.dto.PageableResponse;
+import com.vrx.electronic.store.dto.response.ImageResponse;
+import com.vrx.electronic.store.dto.response.PageableResponse;
 import com.vrx.electronic.store.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

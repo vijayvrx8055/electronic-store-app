@@ -1,6 +1,6 @@
 package com.vrx.electronic.store.service;
 
-import com.vrx.electronic.store.dto.PageableResponse;
+import com.vrx.electronic.store.dto.response.PageableResponse;
 import com.vrx.electronic.store.dto.UserDto;
 
 import java.util.List;

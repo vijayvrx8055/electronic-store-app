@@ -1,8 +1,8 @@
 package com.vrx.electronic.store.service;
 
 import com.vrx.electronic.store.dto.CategoryDto;
-import com.vrx.electronic.store.dto.ImageResponse;
-import com.vrx.electronic.store.dto.PageableResponse;
+import com.vrx.electronic.store.dto.response.ImageResponse;
+import com.vrx.electronic.store.dto.response.PageableResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface CategoryService {
