@@ -1,13 +1,10 @@
 package com.vrx.electronic.store.service;
 
-import com.vrx.electronic.store.dto.ApiResponseMessage;
 import com.vrx.electronic.store.dto.ImageResponse;
 import com.vrx.electronic.store.dto.PageableResponse;
 import com.vrx.electronic.store.dto.ProductDto;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 public interface ProductService {
 
@@ -42,6 +39,9 @@ public interface ProductService {
     //create product with category
     ProductDto createWithCategory(ProductDto productDto, String categoryId);
 
-    //add category to product
-    
+    //add category of product - or add product to any category
+    ProductDto updateCategory(String productId, String categoryId);
+
+    //get all by category
+    PageableResponse<ProductDto> getAllOfCategory(String categoryId, int pageNumber, int pageSize, String sortBy, String sortDir);
 }
