@@ -38,4 +38,10 @@ public interface ProductService {
     ImageResponse uploadImage(MultipartFile file, String productId);
 
     void serveProductImage(String productId, HttpServletResponse response);
+
+    //create product with category
+    ProductDto createWithCategory(ProductDto productDto, String categoryId);
+
+    //add category to product
+    
 }

@@ -94,10 +94,19 @@ public class ProductController {
 
     //serve image
     @GetMapping("/image/{productId}")
-    public void serveProductImage(@PathVariable String productId, HttpServletResponse response){
-        productService.serveProductImage(productId,response);
+    public void serveProductImage(@PathVariable String productId, HttpServletResponse response) {
+        productService.serveProductImage(productId, response);
 
     }
+
+    //create product with category
+    @PostMapping("/category/{categoryId}")
+    public ResponseEntity<ProductDto> createProductWithCategory(@RequestBody ProductDto productDto, @PathVariable String categoryId) {
+        ProductDto withCategory = productService.createWithCategory(productDto, categoryId);
+        return new ResponseEntity<>(withCategory, HttpStatus.CREATED);
+    }
+
+    //add category to product
 
 
 }

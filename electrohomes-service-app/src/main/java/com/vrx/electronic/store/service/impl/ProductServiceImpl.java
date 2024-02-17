@@ -3,8 +3,10 @@ package com.vrx.electronic.store.service.impl;
 import com.vrx.electronic.store.dto.ImageResponse;
 import com.vrx.electronic.store.dto.PageableResponse;
 import com.vrx.electronic.store.dto.ProductDto;
+import com.vrx.electronic.store.entity.Category;
 import com.vrx.electronic.store.entity.Product;
 import com.vrx.electronic.store.exception.ResourceNotFoundException;
+import com.vrx.electronic.store.repository.CategoryRepository;
 import com.vrx.electronic.store.repository.ProductRepository;
 import com.vrx.electronic.store.service.FileService;
 import com.vrx.electronic.store.service.ProductService;
@@ -38,6 +40,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private FileService fileService;
@@ -160,5 +165,19 @@ public class ProductServiceImpl implements ProductService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public ProductDto createWithCategory(ProductDto productDto, String categoryId) {
+        //fetch the category from DB
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category Not Found !!"));
+        Product product = mapper.map(productDto, Product.class);
+        //save the category inside product
+        product.setCategory(category);
+        //generate random productID
+        String productId = UUID.randomUUID().toString();
+        product.setProductId(productId);
+        Product saved = productRepository.save(product);
+        return mapper.map(saved, ProductDto.class);
     }
 }
