@@ -1,13 +1,16 @@
 package com.vrx.electronic.store.controller;
 
 import com.vrx.electronic.store.dto.ApiResponseMessage;
+import com.vrx.electronic.store.dto.ImageResponse;
 import com.vrx.electronic.store.dto.PageableResponse;
 import com.vrx.electronic.store.dto.ProductDto;
 import com.vrx.electronic.store.service.ProductService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/products")
@@ -81,4 +84,20 @@ public class ProductController {
         PageableResponse<ProductDto> product = productService.searchProducts(subTitle, pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
+
+    //upload image
+    @PostMapping("/image/{productId}")
+    public ResponseEntity<ImageResponse> uploadImage(@RequestParam MultipartFile file, @PathVariable String productId) {
+        ImageResponse imageResponse = productService.uploadImage(file, productId);
+        return new ResponseEntity<>(imageResponse, HttpStatus.CREATED);
+    }
+
+    //serve image
+    @GetMapping("/image/{productId}")
+    public void serveProductImage(@PathVariable String productId, HttpServletResponse response){
+        productService.serveProductImage(productId,response);
+
+    }
+
+
 }

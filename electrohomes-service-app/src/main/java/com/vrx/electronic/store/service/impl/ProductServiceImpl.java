@@ -1,20 +1,35 @@
 package com.vrx.electronic.store.service.impl;
 
+import com.vrx.electronic.store.dto.ImageResponse;
 import com.vrx.electronic.store.dto.PageableResponse;
 import com.vrx.electronic.store.dto.ProductDto;
 import com.vrx.electronic.store.entity.Product;
 import com.vrx.electronic.store.exception.ResourceNotFoundException;
 import com.vrx.electronic.store.repository.ProductRepository;
+import com.vrx.electronic.store.service.FileService;
 import com.vrx.electronic.store.service.ProductService;
 import com.vrx.electronic.store.util.PageUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 
@@ -25,7 +40,13 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
 
     @Autowired
+    private FileService fileService;
+
+    @Autowired
     private ModelMapper mapper;
+
+    @Value("${product.image.path}")
+    private String productImagePath;
 
     @Override
     public ProductDto create(ProductDto productDto) {
@@ -56,7 +77,19 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(String productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found !!"));
+        deleteProductImage(productId);
         productRepository.delete(product);
+    }
+
+    public void deleteProductImage(String productId) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product Not Found!!"));
+        String fullPath = productImagePath + product.getProductImageName();
+        Path path = Paths.get(fullPath);
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -95,5 +128,37 @@ public class ProductServiceImpl implements ProductService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Product> products = productRepository.findByTitleContaining(subTitle, pageable);
         return PageUtil.getPageableResponse(products, ProductDto.class);
+    }
+
+    @Override
+    public ImageResponse uploadImage(MultipartFile file, String productId) {
+
+        try {
+            String uploadedFile = fileService.uploadFile(file, productImagePath);
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Product NOT FOUND !!"));
+            product.setProductImageName(uploadedFile);
+            productRepository.save(product);
+            return ImageResponse.builder().imageName(uploadedFile)
+                    .status(HttpStatus.CREATED)
+                    .success(true)
+                    .message("Product Image Uploaded Successfully !!")
+                    .build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void serveProductImage(String productId, HttpServletResponse response) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product NOT FOUND !!"));
+        try {
+            InputStream resource = fileService.getResource(productImagePath, product.getProductImageName());
+            response.setContentType(MediaType.IMAGE_PNG_VALUE);
+            StreamUtils.copy(resource, response.getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
