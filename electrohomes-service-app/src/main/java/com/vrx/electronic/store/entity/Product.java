@@ -25,6 +25,7 @@ public class Product {
     private boolean isLive;
     private boolean inStock;
     private String productImageName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
