@@ -1,6 +1,7 @@
-package com.vrx.electronic.store.dto;
+package com.vrx.electronic.store.dto.response;
 
-import jakarta.validation.constraints.NotBlank;
+import com.vrx.electronic.store.dto.OrderItemDto;
+
 import lombok.*;
 
 import java.util.ArrayList;
@@ -11,20 +12,17 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
-public class OrderDto {
+@ToString
+public class OrderResponse {
     private String orderId;
-    private String orderStatus = "PENDING";
-    private String paymentStatus = "NOTPAID";
+    private String orderStatus;
+    private String paymentStatus;
     private double orderAmount;
-    @NotBlank(message = "Address is required")
     private String billingAddress;
-    @NotBlank(message = "Phone is required")
     private String billingPhone;
-    @NotBlank(message = "Name is required")
     private String billingName;
     private Date orderedDate;
     private Date deliveredDate;
     private List<OrderItemDto> orderItems = new ArrayList<>();
-
+// always use DTO objects to avoid infinite recursion
 }

@@ -1,5 +1,8 @@
 package com.vrx.electronic.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +16,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "USERS")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 public class User {
 
     @Id
@@ -36,6 +40,7 @@ public class User {
     @Column(name = "user_image_name")
     private String imageName;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Order> orders = new ArrayList<>();
 

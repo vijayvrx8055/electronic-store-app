@@ -1,10 +1,11 @@
 package com.vrx.electronic.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +16,9 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "orders")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "orderId")
 public class Order {
     @Id
     private String orderId;
@@ -31,11 +34,14 @@ public class Order {
     private Date orderedDate;
     private Date deliveredDate;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.REMOVE)
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = {CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
 
