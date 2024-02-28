@@ -19,7 +19,7 @@ ElectroHomes is an electronic store application designed to provide a seamless s
 
 - **Backend:** Spring Boot, Java
 - **Frontend:** Angular, HTML, CSS, TypeScript
-- **Database:** [Specify your database technology here, e.g., MySQL, PostgreSQL, MongoDB]
+- **Database:** MySQL
 - **Authentication:** JSON Web Tokens (JWT)
 - **Deployment:** [Specify your deployment platform here, e.g., AWS, Heroku]
 
