@@ -34,14 +34,15 @@ public class Order {
     private Date orderedDate;
     private Date deliveredDate;
 
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
-    @JsonManagedReference
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = {CascadeType.MERGE, CascadeType.PERSIST,
             CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
+    @JsonManagedReference
     private List<OrderItem> orderItems = new ArrayList<>();
 
 

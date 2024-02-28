@@ -1,36 +1,67 @@
 package com.vrx.electronic.store.config;
 
+import com.vrx.electronic.store.dto.UserDto;
+import com.vrx.electronic.store.dto.response.JwtResponse;
+import com.vrx.electronic.store.exception.BadApiRequest;
+import com.vrx.electronic.store.security.JwtAuthenticationEntryPoint;
+import com.vrx.electronic.store.security.JwtAuthenticationFilter;
+import com.vrx.electronic.store.security.JwtHelper;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
+
+    @Autowired
+    private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    @Autowired
+    private JwtAuthenticationFilter authenticationFilter;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private JwtHelper helper;
+
+
     //declare the beans: spring will autoconfigure
-
-    //configure user
+    //Implementing JWT auth
     @Bean
-    public UserDetailsService userDetailsService() {
-        //create user
-        UserDetails normal = User.builder() //org.springframework.security.core
-                .username("Vandana")
-                .password(passwordEncoder().encode("vandana123"))
-                .roles("NORMAL")
-                .build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/login").permitAll())
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().authenticated())
+//                .httpBasic(Customizer.withDefaults()); // used for basic authentication
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        UserDetails admin = User.builder()
-                .username("Vijay")
-                .password(passwordEncoder().encode("vijay123"))
-                .roles("ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager();
+        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
+
 
     //create password encoder
     @Bean
@@ -38,5 +69,24 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AuthenticationManager getAuthenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
 
+    public JwtResponse doAuthentication(String email, String password) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        try {
+            getAuthenticationManager(new AuthenticationConfiguration()).authenticate(authenticationToken);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            String generatedToken = helper.generateToken(userDetails);
+            return JwtResponse.builder()
+                    .jwtToken(generatedToken)
+                    .userDto(modelMapper.map(userDetails, UserDto.class)).build();
+        } catch (BadCredentialsException b) {
+            throw new BadApiRequest("Invalid Username or Password !!");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
