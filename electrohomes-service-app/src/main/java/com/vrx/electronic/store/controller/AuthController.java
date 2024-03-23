@@ -36,7 +36,6 @@ public class AuthController {
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
         JwtResponse jwtResponse = this.securityConfig.doAuthentication(request.getEmail(), request.getPassword());
         return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
-
     }
 
 }

@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -42,15 +42,21 @@ public class User implements UserDetails {
     @Column(name = "user_image_name")
     private String imageName;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // If you have any lazy loaded properties having a relationship
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    // If you have any lazy loaded properties having a relationship
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<Order> orders = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "user_roles")
+    private Set<Role> roles = new HashSet<>();
+
     //must have to implement
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Set<SimpleGrantedAuthority> authorities = this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toSet());
+        return authorities;
     }
 
     @Override

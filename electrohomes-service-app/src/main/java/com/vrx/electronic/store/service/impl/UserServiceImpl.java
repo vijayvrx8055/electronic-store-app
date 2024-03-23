@@ -2,8 +2,10 @@ package com.vrx.electronic.store.service.impl;
 
 import com.vrx.electronic.store.dto.response.PageableResponse;
 import com.vrx.electronic.store.dto.UserDto;
+import com.vrx.electronic.store.entity.Role;
 import com.vrx.electronic.store.entity.User;
 import com.vrx.electronic.store.exception.ResourceNotFoundException;
+import com.vrx.electronic.store.repository.RoleRepository;
 import com.vrx.electronic.store.repository.UserRepository;
 import com.vrx.electronic.store.service.UserService;
 import com.vrx.electronic.store.util.PageUtil;
@@ -19,9 +21,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,8 +42,14 @@ public class UserServiceImpl implements UserService {
     @Value("${user.profile.image.path}")
     private String imagePath;
 
+    @Value("${role.normal.id}")
+    private String normalRoleId;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -48,6 +58,13 @@ public class UserServiceImpl implements UserService {
         userDto.setUserId(userId);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User user = dtoToEntity(userDto);
+        Role role = roleRepository.findById(normalRoleId).orElseThrow(() -> new ResourceNotFoundException("Role is not present!!"));
+        if (user.getRoles() == null) {
+            user.setRoles(new HashSet<>());
+            user.getRoles().add(role);
+        } else {
+            user.getRoles().add(role);
+        }
         User savedUser = userRepository.save(user);
         return entityToDto(savedUser);
     }

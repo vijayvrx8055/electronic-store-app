@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //
         //Authorization
         String requestHeader = request.getHeader("Authorization");
-        logger.info("Header: {}", requestHeader);
+        logger.info("Header:{}", requestHeader);
         //Bearer 2353453skdgfhjsdhfjsdhfg
 
         String username = null;
@@ -43,9 +43,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (requestHeader != null && requestHeader.startsWith("Bearer")) {
 //            a. Get token from request
             token = requestHeader.substring(7);
+            logger.info("token:{}", token);
             try {
 //                b. Get username from token
                 username = this.jwtHelper.getUsernameFromToken(token);
+                logger.info("username:{}", username);
             } catch (IllegalArgumentException e) {
                 logger.error("Illegal Argument while fetching the username!");
             } catch (ExpiredJwtException e) {
@@ -58,9 +60,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } else {
             logger.info("Invalid Header Value!!");
         }
-        if (username != null && SecurityContextHolder.getContext() == null) {
+        if (username != null && SecurityContextHolder.getContext() != null) {
 //            c. Load user associated with token
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            logger.info("UserDetails: {}", userDetails);
 //            d. Validate token
             Boolean validatedToken = this.jwtHelper.validateToken(token, userDetails);
             if (validatedToken) {
