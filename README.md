@@ -3,17 +3,21 @@ Full Project for electronic store including UI and service apps
 
 IN PROGRESS...
 
-# ElectroHomes
+Here's a complete `README.md` file template for your electronic store application:
 
-ElectroHomes is an electronic store application designed to provide a seamless shopping experience for users interested in purchasing electronic products. The application consists of a backend service built with Spring Boot and a user interface developed using Angular.
+---
+
+# ElectroHomes - Electronic Store Application
+
+ElectroHomes is a comprehensive electronic store application designed to offer a seamless shopping experience for users looking to purchase electronic products. The application features a Spring Boot backend and an Angular frontend.
 
 ## Features
 
-- **Product Catalog:** Browse through a wide range of electronic products conveniently categorized for easy navigation.
-- **User Authentication:** Secure user authentication system to ensure data privacy and personalized experiences.
-- **Shopping Cart:** Add products to the cart for later purchase and manage quantities as needed.
-- **Order Management:** View and manage orders with ease, including order history and status tracking.
-- **Responsive Design:** The user interface is optimized for various devices, ensuring a consistent experience across desktop and mobile platforms.
+- **Product Catalog:** Browse a variety of electronic products categorized for easy navigation.
+- **User Authentication:** Secure user login and registration.
+- **Shopping Cart:** Add, manage, and purchase products.
+- **Order Management:** Track order history and status.
+- **Responsive Design:** Optimized for both desktop and mobile platforms.
 
 ## Technologies Used
 
@@ -21,49 +25,93 @@ ElectroHomes is an electronic store application designed to provide a seamless s
 - **Frontend:** Angular, HTML, CSS, TypeScript
 - **Database:** MySQL
 - **Authentication:** JSON Web Tokens (JWT)
-- **Deployment:** [Specify your deployment platform here, e.g., AWS, Heroku]
+- **Deployment:** [Your deployment platform, e.g., AWS, Heroku]
 
 ## Setup Instructions
 
+### Prerequisites
+
+- Java 11 or later
+- Node.js and npm
+- MySQL
+
+### Backend Setup
+
 1. **Clone the repository:**
-```
-git clone https://github.com/vijayvrx8055/electronic-store-app.git 
-```
+   ```bash
+   git clone https://github.com/vijayvrx8055/electronic-store-app.git
+   ```
+2. **Navigate to the backend directory:**
+   ```bash
+   cd electronic-store-app/electrohomes-service-app
+   ```
+3. **Set up the MySQL database:**
+   - Create a new MySQL database:
+     ```sql
+     CREATE DATABASE electronic_store;
+     ```
+   - Update `application.properties` with your database credentials.
+4. **Run the Spring Boot application:**
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
+### Frontend Setup
 
-2. **Backend Setup:**
-- Navigate to the `backend` directory:
-  ```
-  cd electrohomes-service-app
-  ```
-- [Provide instructions for setting up the backend, including database configuration and running the Spring Boot application.]
+1. **Navigate to the frontend directory:**
+   ```bash
+   cd ../electrohomes-ui-app
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Run the Angular application:**
+   ```bash
+   ng serve
+   ```
+4. **Access the application:**
+   Open your browser and navigate to `http://localhost:4200`.
 
-3. **Frontend Setup:**
-- Navigate to the `frontend` directory:
-  ```
-  cd electrohomes-ui-app
-  ```
-- [Provide instructions for setting up the frontend, including installing dependencies and running the Angular application.]
+## API Endpoints
 
-4. **Accessing the Application:**
-- Once both backend and frontend are set up, you can access the application by opening it in a web browser.
-- [Specify the URL where the application will be accessible, e.g., http://localhost:4200]
+- **User Registration/Login:**
+  - `POST /api/auth/register` - Register a new user.
+  - `POST /api/auth/login` - Login a user.
+- **Product Management:**
+  - `GET /api/products` - Get all products.
+  - `POST /api/products` - Add a new product.
+- **Order Management:**
+  - `POST /api/orders` - Create a new order.
+  - `GET /api/orders/{userId}` - Get orders for a user.
+
+## Database Details
+
+- **Database:** MySQL
+- **Tables:**
+  - `users` - Stores user details.
+  - `products` - Stores product information.
+  - `orders` - Stores order details.
+  - `order_items` - Stores details of items in an order.
 
 ## Contributing
 
-Contributions are welcome! If you'd like to contribute to ElectroHomes, please follow these steps:
-- Fork the repository
-- Create your feature branch (`git checkout -b feature/YourFeature`)
-- Commit your changes (`git commit -am 'Add some feature'`)
-- Push to the branch (`git push origin feature/YourFeature`)
-- Create a new Pull Request
+Contributions are welcome! Follow these steps:
+
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/YourFeature`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature/YourFeature`
+5. Create a new Pull Request.
 
 ## License
 
-[Specify your license here, e.g., MIT License]
+This project is licensed under the GPL-3.0 License.
 
 ## Contact
 
-For any inquiries or support, feel free to contact us at [vijay.kumar.vrx@gmail.com].
+For support or inquiries, contact [vijay.kumar.vrx@gmail.com](mailto:vijay.kumar.vrx@gmail.com).
+
+---
 
 Thank you for using ElectroHomes!
