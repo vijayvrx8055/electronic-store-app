@@ -8,6 +8,7 @@ import com.vrx.electronic.store.security.JwtAuthenticationFilter;
 import com.vrx.electronic.store.security.JwtHelper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true) // allows to restrict methods based on roles
@@ -46,26 +52,40 @@ public class SecurityConfig {
     @Autowired
     private JwtHelper helper;
 
+    private final String[] PUBLIC_URLS = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/swagger-resources/**",
+            "/swagger-resources",
+            "/configuration/**"
+    };
 
-    //declare the beans: spring will autoconfigure
-    //Implementing JWT auth
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login").permitAll())
-                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/users").permitAll())
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN");
-                    auth.anyRequest().authenticated();
-                })
-//                .httpBasic(Customizer.withDefaults()); // used for basic authentication
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
+    // declare the beans: spring will autoconfigure
+    // Implementing JWT auth
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//
+//
+//        http.csrf(AbstractHttpConfigurer::disable)
+////                .cors(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login").permitAll())
+//                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/google").permitAll())
+//                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/users").permitAll())
+//                .authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_URLS).permitAll())
+//                .authorizeHttpRequests(auth -> {
+//                    auth.requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN");
+//                    auth.anyRequest().authenticated();
+//                })
+////                .httpBasic(Customizer.withDefaults()); // used for basic authentication
+//                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//
+//        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//        return http.build();
+//    }
 
 
     //create password encoder
@@ -93,5 +113,27 @@ public class SecurityConfig {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    //CORS configuration
+    @Bean
+    public CorsFilter corsFilter() {
+        //create cors configuration source
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(Arrays.asList("https://domain2.com", "http://localhost:4200"));
+        corsConfiguration.addAllowedHeader("Authorization");
+        corsConfiguration.addAllowedHeader("Content-Type");
+        corsConfiguration.addAllowedHeader("Accept");
+        corsConfiguration.addAllowedMethod("GET");
+        corsConfiguration.addAllowedMethod("POST");
+        corsConfiguration.addAllowedMethod("PUT");
+        corsConfiguration.addAllowedMethod("DELETE");
+        corsConfiguration.addAllowedMethod("OPTION");
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        CorsFilter corsFilter = new CorsFilter(source);
+        filterRegistrationBean.setOrder(-5);
+        return corsFilter;
     }
 }

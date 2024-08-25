@@ -27,7 +27,7 @@ public class UserDto {
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,3}$", message = "Invalid Email Format !!")
     @NotBlank(message = "Email is required !!")
     private String email;
-
+    
     @NotBlank(message = "Password is required !!")
     private String password;
 

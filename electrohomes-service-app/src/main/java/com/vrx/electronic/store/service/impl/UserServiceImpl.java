@@ -16,17 +16,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -114,10 +114,25 @@ public class UserServiceImpl implements UserService {
         return entityToDto(user);
     }
 
+    public Optional<User> getUserByEmailOptional(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     @Override
     public List<UserDto> searchUsers(String keyword) {
         List<User> users = userRepository.findByNameContaining(keyword).orElseThrow(() -> new ResourceNotFoundException("Users not found with given keywords"));
         return users.stream().map(this::entityToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public void createNewUserByDefault(String email, String name, String photoUrl, String password) {
+        UserDto userDto = UserDto.builder().name(name)
+                .email(email)
+                .imageName(photoUrl)
+                .password(password)
+                .roles(new HashSet<>())
+                .build();
+        UserDto user = createUser(userDto);
     }
 
     public void deleteUserImage(String userId) {
